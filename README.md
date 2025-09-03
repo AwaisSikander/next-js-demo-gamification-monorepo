@@ -1,39 +1,50 @@
 # Gamification Monorepo (PoC)
 
-🚀 A clean **monorepo** starting point for a manufacturing **gamification** Proof of Concept.  
-Planned stack: **Next.js (App Router)**, **PostgreSQL**, **Zero Sync**, **TailwindCSS**, and **Zustand**.
+This is a **Proof of Concept** gamification app built with **Next.js (App Router)**, **PostgreSQL**, and **Turbo monorepo**. It demonstrates a **real-time leaderboard** with modern tooling.
 
----
+## ✅ Implemented
 
-## 🎯 Roadmap (PoC)
+- **Monorepo with Turbo** (`apps/web`)
+- **Next.js** frontend with Tailwind (dark/light via CSS vars)
+- **Postgres** DB (`leaderboard` table) + trigger (`LISTEN/NOTIFY`)
+- **API routes**: `/api/leaderboard`, `/api/events` (SSE, Node runtime)
+- **Realtime UI**: SSE stream updates instantly on DB changes
+- **Zustand** for global state
+- **Framer Motion** animations (slowed springs, staggered rows)
+- **Zod** validation for payloads
+- **OpenTelemetry** bootstrap (`otel.cjs`) + custom span around DB query
 
-- [ ] Scaffold Next.js app under `apps/web`
-- [ ] Connect to PostgreSQL (local dev)
-- [ ] Build Leaderboard (reads from DB)
-- [ ] Integrate Zero Sync for real-time updates
-- [ ] Add Challenges + Rewards (basic CRUD)
-- [ ] Write tests (unit + E2E)
+## 🚀 Demo Flow
 
----
+1. Run `npm i && npm run dev`
+2. Open `http://localhost:3000` → see leaderboard
+3. Update DB in `psql` → page updates live (no refresh)
 
-## 🛠 Tech Stack
+```sql
+UPDATE leaderboard SET score = score + 1 WHERE name='Device B';
 
-- **Next.js 15** (App Router)
-- **PostgreSQL** (with Zero Sync planned)
-- **TailwindCSS** (utility-first styling)
-- **Zustand** (lightweight state management)
-- **Turborepo** (monorepo management)
+## ⚠️ Missing (because PoC)
 
----
+No authentication/authorization (RBAC)
 
-## 🚦 Scripts (to be added later)
+No rate limiting / CSRF / CORS hardening
 
-```bash
-# Run all apps in dev mode
-npm run dev
+Uses postgres superuser in dev (needs least-privilege in prod)
 
-# Build all apps
-npm run build
+.env secrets are local only (should use secret manager in prod)
 
-# Lint codebase
-npm run lint
+Error handling & structured logging are minimal
+
+OTel traces only export to console (should send to OTLP collector in prod)
+
+## 🎯 Next Steps
+
+Swap SSE → Zero Sync for offline-first sync
+
+Add Challenges + Rewards CRUD with Zod validation
+
+Wire Vitest/Playwright tests
+
+Harden security (auth, headers, rate limits)
+
+CI/CD pipeline + OTel collector integration
